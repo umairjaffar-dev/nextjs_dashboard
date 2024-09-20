@@ -2,6 +2,7 @@
 import { db } from '@vercel/postgres';
 import { invoices, customers, revenue, users } from '../lib/placeholder-data';
 const bcrypt = require('bcrypt');
+// TODO: use bcryptjs instead of bcrypt id not working.
 
 const client = await db.connect();
 
