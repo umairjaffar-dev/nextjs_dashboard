@@ -4,6 +4,36 @@ import { sql } from "@vercel/postgres";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { signIn } from '@/auth';
+import { AuthError } from 'next-auth';
+ 
+// ...
+ 
+/**
+ * Handles authentication with the backend.
+ * @param prevState the previous state of the form, passed from the caller.
+ * @param formData the form data to send to the backend.
+ * @returns a string with an error message if authentication failed, or undefined if it succeeded.
+ * @throws if the error is not an instance of AuthError.
+ */
+export async function authenticate(
+  prevState: string | undefined,
+  formData: FormData,
+) {
+  try {
+    await signIn('credentials', formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return 'Invalid credentials.';
+        default:
+          return 'Something went wrong.';
+      }
+    }
+    throw error;
+  }
+}
 
 export type State = {
   errors?: {
